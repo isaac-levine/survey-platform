@@ -7,7 +7,6 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 
 describe('PropertyController', () => {
   let controller: PropertyController;
-  let service: PropertyService;
 
   const mockPropertyService = {
     create: jest.fn(),
@@ -29,7 +28,6 @@ describe('PropertyController', () => {
     }).compile();
 
     controller = module.get<PropertyController>(PropertyController);
-    service = module.get<PropertyService>(PropertyService);
   });
 
   afterEach(() => {
@@ -63,7 +61,7 @@ describe('PropertyController', () => {
       const result = await controller.create(createDto);
 
       expect(result).toEqual(expectedProperty);
-      expect(service.create).toHaveBeenCalledWith(createDto);
+      expect(mockPropertyService.create).toHaveBeenCalledWith(createDto);
     });
   });
 
@@ -92,7 +90,7 @@ describe('PropertyController', () => {
       const result = await controller.findAll();
 
       expect(result).toEqual(expectedProperties);
-      expect(service.findAll).toHaveBeenCalled();
+      expect(mockPropertyService.findAll).toHaveBeenCalled();
     });
   });
 
@@ -119,7 +117,7 @@ describe('PropertyController', () => {
       const result = await controller.findOne('1');
 
       expect(result).toEqual(expectedProperty);
-      expect(service.findOne).toHaveBeenCalledWith('1');
+      expect(mockPropertyService.findOne).toHaveBeenCalledWith('1');
     });
 
     it('should throw NotFoundException if property not found', async () => {
@@ -127,7 +125,9 @@ describe('PropertyController', () => {
         new NotFoundException('Property with ID 999 not found'),
       );
 
-      await expect(controller.findOne('999')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('999')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -158,7 +158,7 @@ describe('PropertyController', () => {
       const result = await controller.update('1', updateDto);
 
       expect(result).toEqual(updatedProperty);
-      expect(service.update).toHaveBeenCalledWith('1', updateDto);
+      expect(mockPropertyService.update).toHaveBeenCalledWith('1', updateDto);
     });
   });
 
@@ -185,7 +185,7 @@ describe('PropertyController', () => {
       const result = await controller.remove('1');
 
       expect(result).toEqual(deletedProperty);
-      expect(service.remove).toHaveBeenCalledWith('1');
+      expect(mockPropertyService.remove).toHaveBeenCalledWith('1');
     });
   });
 });

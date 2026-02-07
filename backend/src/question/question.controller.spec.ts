@@ -7,7 +7,6 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 
 describe('QuestionController', () => {
   let controller: QuestionController;
-  let service: QuestionService;
 
   const mockQuestionService = {
     create: jest.fn(),
@@ -29,7 +28,6 @@ describe('QuestionController', () => {
     }).compile();
 
     controller = module.get<QuestionController>(QuestionController);
-    service = module.get<QuestionService>(QuestionService);
   });
 
   afterEach(() => {
@@ -58,7 +56,7 @@ describe('QuestionController', () => {
       const result = await controller.create(createDto);
 
       expect(result).toEqual(expectedQuestion);
-      expect(service.create).toHaveBeenCalledWith(createDto);
+      expect(mockQuestionService.create).toHaveBeenCalledWith(createDto);
     });
   });
 
@@ -82,7 +80,7 @@ describe('QuestionController', () => {
       const result = await controller.findAll();
 
       expect(result).toEqual(expectedQuestions);
-      expect(service.findAll).toHaveBeenCalledWith(undefined);
+      expect(mockQuestionService.findAll).toHaveBeenCalledWith(undefined);
     });
 
     it('should filter questions by surveyId when provided', async () => {
@@ -104,7 +102,7 @@ describe('QuestionController', () => {
       const result = await controller.findAll('1');
 
       expect(result).toEqual(expectedQuestions);
-      expect(service.findAll).toHaveBeenCalledWith('1');
+      expect(mockQuestionService.findAll).toHaveBeenCalledWith('1');
     });
   });
 
@@ -126,7 +124,7 @@ describe('QuestionController', () => {
       const result = await controller.findOne('1');
 
       expect(result).toEqual(expectedQuestion);
-      expect(service.findOne).toHaveBeenCalledWith('1');
+      expect(mockQuestionService.findOne).toHaveBeenCalledWith('1');
     });
 
     it('should throw NotFoundException if question not found', async () => {
@@ -134,7 +132,9 @@ describe('QuestionController', () => {
         new NotFoundException('Question with ID 999 not found'),
       );
 
-      await expect(controller.findOne('999')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('999')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -160,7 +160,7 @@ describe('QuestionController', () => {
       const result = await controller.update('1', updateDto);
 
       expect(result).toEqual(updatedQuestion);
-      expect(service.update).toHaveBeenCalledWith('1', updateDto);
+      expect(mockQuestionService.update).toHaveBeenCalledWith('1', updateDto);
     });
   });
 
@@ -182,7 +182,7 @@ describe('QuestionController', () => {
       const result = await controller.remove('1');
 
       expect(result).toEqual(deletedQuestion);
-      expect(service.remove).toHaveBeenCalledWith('1');
+      expect(mockQuestionService.remove).toHaveBeenCalledWith('1');
     });
   });
 });

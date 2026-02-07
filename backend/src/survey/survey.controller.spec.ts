@@ -7,7 +7,6 @@ import { UpdateSurveyDto } from './dto/update-survey.dto';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
-  let service: SurveyService;
 
   const mockSurveyService = {
     create: jest.fn(),
@@ -29,7 +28,6 @@ describe('SurveyController', () => {
     }).compile();
 
     controller = module.get<SurveyController>(SurveyController);
-    service = module.get<SurveyService>(SurveyService);
   });
 
   afterEach(() => {
@@ -56,7 +54,7 @@ describe('SurveyController', () => {
       const result = await controller.create(createDto);
 
       expect(result).toEqual(expectedSurvey);
-      expect(service.create).toHaveBeenCalledWith(createDto);
+      expect(mockSurveyService.create).toHaveBeenCalledWith(createDto);
     });
   });
 
@@ -78,7 +76,7 @@ describe('SurveyController', () => {
       const result = await controller.findAll();
 
       expect(result).toEqual(expectedSurveys);
-      expect(service.findAll).toHaveBeenCalledWith(undefined);
+      expect(mockSurveyService.findAll).toHaveBeenCalledWith(undefined);
     });
 
     it('should filter surveys by propertyId when provided', async () => {
@@ -98,7 +96,7 @@ describe('SurveyController', () => {
       const result = await controller.findAll('1');
 
       expect(result).toEqual(expectedSurveys);
-      expect(service.findAll).toHaveBeenCalledWith('1');
+      expect(mockSurveyService.findAll).toHaveBeenCalledWith('1');
     });
   });
 
@@ -118,7 +116,7 @@ describe('SurveyController', () => {
       const result = await controller.findOne('1');
 
       expect(result).toEqual(expectedSurvey);
-      expect(service.findOne).toHaveBeenCalledWith('1');
+      expect(mockSurveyService.findOne).toHaveBeenCalledWith('1');
     });
 
     it('should throw NotFoundException if survey not found', async () => {
@@ -126,7 +124,9 @@ describe('SurveyController', () => {
         new NotFoundException('Survey with ID 999 not found'),
       );
 
-      await expect(controller.findOne('999')).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne('999')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -150,7 +150,7 @@ describe('SurveyController', () => {
       const result = await controller.update('1', updateDto);
 
       expect(result).toEqual(updatedSurvey);
-      expect(service.update).toHaveBeenCalledWith('1', updateDto);
+      expect(mockSurveyService.update).toHaveBeenCalledWith('1', updateDto);
     });
   });
 
@@ -170,7 +170,7 @@ describe('SurveyController', () => {
       const result = await controller.remove('1');
 
       expect(result).toEqual(deletedSurvey);
-      expect(service.remove).toHaveBeenCalledWith('1');
+      expect(mockSurveyService.remove).toHaveBeenCalledWith('1');
     });
   });
 });

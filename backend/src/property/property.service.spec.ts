@@ -7,7 +7,6 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 
 describe('PropertyService', () => {
   let service: PropertyService;
-  let prisma: PrismaService;
 
   const mockPrismaService = {
     property: {
@@ -31,7 +30,6 @@ describe('PropertyService', () => {
     }).compile();
 
     service = module.get<PropertyService>(PropertyService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -65,7 +63,7 @@ describe('PropertyService', () => {
       const result = await service.create(createDto);
 
       expect(result).toEqual(expectedProperty);
-      expect(prisma.property.create).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.create).toHaveBeenCalledWith({
         data: createDto,
       });
     });
@@ -96,7 +94,7 @@ describe('PropertyService', () => {
       const result = await service.findAll();
 
       expect(result).toEqual(expectedProperties);
-      expect(prisma.property.findMany).toHaveBeenCalled();
+      expect(mockPrismaService.property.findMany).toHaveBeenCalled();
     });
   });
 
@@ -123,7 +121,7 @@ describe('PropertyService', () => {
       const result = await service.findOne('1');
 
       expect(result).toEqual(expectedProperty);
-      expect(prisma.property.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
     });
@@ -132,7 +130,7 @@ describe('PropertyService', () => {
       mockPrismaService.property.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
-      expect(prisma.property.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.findUnique).toHaveBeenCalledWith({
         where: { id: '999' },
       });
     });
@@ -173,10 +171,10 @@ describe('PropertyService', () => {
       const result = await service.update('1', updateDto);
 
       expect(result).toEqual(updatedProperty);
-      expect(prisma.property.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
-      expect(prisma.property.update).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.update).toHaveBeenCalledWith({
         where: { id: '1' },
         data: updateDto,
       });
@@ -215,10 +213,10 @@ describe('PropertyService', () => {
       const result = await service.remove('1');
 
       expect(result).toEqual(existingProperty);
-      expect(prisma.property.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
-      expect(prisma.property.delete).toHaveBeenCalledWith({
+      expect(mockPrismaService.property.delete).toHaveBeenCalledWith({
         where: { id: '1' },
       });
     });

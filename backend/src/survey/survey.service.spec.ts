@@ -7,7 +7,6 @@ import { UpdateSurveyDto } from './dto/update-survey.dto';
 
 describe('SurveyService', () => {
   let service: SurveyService;
-  let prisma: PrismaService;
 
   const mockPrismaService = {
     survey: {
@@ -31,7 +30,6 @@ describe('SurveyService', () => {
     }).compile();
 
     service = module.get<SurveyService>(SurveyService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -58,7 +56,7 @@ describe('SurveyService', () => {
       const result = await service.create(createDto);
 
       expect(result).toEqual(expectedSurvey);
-      expect(prisma.survey.create).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.create).toHaveBeenCalledWith({
         data: createDto,
       });
     });
@@ -82,7 +80,7 @@ describe('SurveyService', () => {
       const result = await service.findAll();
 
       expect(result).toEqual(expectedSurveys);
-      expect(prisma.survey.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findMany).toHaveBeenCalledWith({
         where: {},
       });
     });
@@ -104,7 +102,7 @@ describe('SurveyService', () => {
       const result = await service.findAll('1');
 
       expect(result).toEqual(expectedSurveys);
-      expect(prisma.survey.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findMany).toHaveBeenCalledWith({
         where: { propertyId: '1' },
       });
     });
@@ -126,7 +124,7 @@ describe('SurveyService', () => {
       const result = await service.findOne('1');
 
       expect(result).toEqual(expectedSurvey);
-      expect(prisma.survey.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
     });
@@ -135,7 +133,7 @@ describe('SurveyService', () => {
       mockPrismaService.survey.findUnique.mockResolvedValue(null);
 
       await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
-      expect(prisma.survey.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '999' },
       });
     });
@@ -168,10 +166,10 @@ describe('SurveyService', () => {
       const result = await service.update('1', updateDto);
 
       expect(result).toEqual(updatedSurvey);
-      expect(prisma.survey.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
-      expect(prisma.survey.update).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.update).toHaveBeenCalledWith({
         where: { id: '1' },
         data: updateDto,
       });
@@ -203,10 +201,10 @@ describe('SurveyService', () => {
       const result = await service.remove('1');
 
       expect(result).toEqual(existingSurvey);
-      expect(prisma.survey.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
       });
-      expect(prisma.survey.delete).toHaveBeenCalledWith({
+      expect(mockPrismaService.survey.delete).toHaveBeenCalledWith({
         where: { id: '1' },
       });
     });
