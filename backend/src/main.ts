@@ -3,7 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true, // Enable raw body access for webhook signature verification
+  });
 
   app.enableCors({
     origin: ['http://localhost:5173'], // your frontend URL(s)
