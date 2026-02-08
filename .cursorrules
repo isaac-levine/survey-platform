@@ -1,5 +1,36 @@
 # Survey Platform Development Rules
 
+## Code Quality and Linting
+
+**ALWAYS run linting and formatting before committing:**
+
+1. **Before committing code changes:**
+   ```bash
+   cd backend
+   npm run lint
+   ```
+
+2. **Fix auto-fixable issues:**
+   ```bash
+   cd backend
+   npm run lint -- --fix
+   ```
+
+3. **TypeScript strict mode is enabled** - avoid `any` types:
+   - Create proper type definitions for webhook payloads, API responses, etc.
+   - Use type assertions (`as Type`) only when necessary and safe
+   - Prefer interfaces/types over `any` for better type safety
+
+4. **Prettier formatting** is enforced:
+   - Run `npm run lint -- --fix` to auto-format code
+   - Follow existing code style (2 spaces, trailing commas, etc.)
+
+5. **Common linting rules:**
+   - No `any` types without proper justification
+   - No unused variables
+   - Async functions should have `await` expressions (or disable rule with comment)
+   - Use proper error handling with typed errors
+
 ## Prisma Schema Changes and Migrations
 
 When making changes to `backend/prisma/schema.prisma`:

@@ -12,21 +12,27 @@ export abstract class BaseWebhookController {
 
   protected verifyWebhook(
     req: RawBodyRequest<Request>,
-    body: any,
+    body: unknown,
     svixId: string,
     svixTimestamp: string,
     svixSignature: string,
     secret: string,
   ): void {
     if (!svixId || !svixTimestamp || !svixSignature) {
-      throw new HttpException('Missing webhook headers', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Missing webhook headers',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     try {
       const wh = new Webhook(secret);
       // req.rawBody is available when NestJS rawBody option is enabled
       if (!req.rawBody) {
-        throw new HttpException('Raw body not available', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Raw body not available',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       wh.verify(req.rawBody.toString(), {
@@ -35,9 +41,13 @@ export abstract class BaseWebhookController {
         'svix-signature': svixSignature,
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(`Webhook verification failed: ${errorMessage}`);
-      throw new HttpException('Invalid webhook signature', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Invalid webhook signature',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
   }
 }

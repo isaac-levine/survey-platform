@@ -1,5 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import type {
+  ClerkWebhookData,
+  ClerkUserData,
+  ClerkOrganizationData,
+  ClerkOrganizationMembershipData,
+} from './clerk-webhook.types';
 
 @Injectable()
 export class ClerkWebhookService {
@@ -7,7 +13,7 @@ export class ClerkWebhookService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async handleEvent(eventType: string, data: any): Promise<void> {
+  async handleEvent(eventType: string, data: ClerkWebhookData): Promise<void> {
     switch (eventType) {
       case 'user.created':
         await this.createUser(data);
@@ -16,48 +22,49 @@ export class ClerkWebhookService {
         await this.upsertUser(data);
         break;
       case 'user.deleted':
-        await this.deleteUser(data.id);
+        await this.deleteUser((data as ClerkUserData).id);
         break;
       case 'organization.created':
-        await this.createOrganization(data);
+        await this.createOrganization(data as ClerkOrganizationData);
         break;
       case 'organization.updated':
-        await this.upsertOrganization(data);
+        await this.upsertOrganization(data as ClerkOrganizationData);
         break;
       case 'organization.deleted':
-        await this.deleteOrganization(data.id);
+        await this.deleteOrganization((data as ClerkOrganizationData).id);
         break;
       case 'organizationMembership.created':
       case 'organizationMembership.updated':
-        await this.updateUserRole(data);
+        await this.updateUserRole(data as ClerkOrganizationMembershipData);
         break;
       case 'organizationMembership.deleted':
-        await this.clearUserRole(data);
+        await this.clearUserRole(data as ClerkOrganizationMembershipData);
         break;
       default:
         this.logger.log(`Unhandled Clerk event: ${eventType}`);
     }
   }
 
-  private async createUser(data: any): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  private async createUser(data: ClerkUserData): Promise<void> {
     const email = data.email_addresses?.[0]?.email_address || '';
-    const firstName = data.first_name || '';
-    const lastName = data.last_name || '';
-    const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : null;
 
     this.logger.log(`Creating user: ${data.id} - ${email}`);
 
     // Note: User creation without organizationId is not possible due to schema constraint
     // Users will be created when they join an organization via organizationMembership.created
     // This event is logged for reference but user creation is deferred
-    this.logger.log(`User ${data.id} created in Clerk, waiting for organization membership to create in DB`);
+    this.logger.log(
+      `User ${data.id} created in Clerk, waiting for organization membership to create in DB`,
+    );
   }
 
-  private async upsertUser(data: any): Promise<void> {
+  private async upsertUser(data: ClerkUserData): Promise<void> {
     const email = data.email_addresses?.[0]?.email_address || '';
     const firstName = data.first_name || '';
     const lastName = data.last_name || '';
-    const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : null;
+    const name =
+      firstName || lastName ? `${firstName} ${lastName}`.trim() : null;
 
     // Only update if user exists (was created via organization membership)
     const existingUser = await this.prisma.user.findUnique({
@@ -74,7 +81,9 @@ export class ClerkWebhookService {
       });
       this.logger.log(`User updated: ${data.id}`);
     } else {
-      this.logger.log(`User ${data.id} not found in DB, skipping update (will be created on org membership)`);
+      this.logger.log(
+        `User ${data.id} not found in DB, skipping update (will be created on org membership)`,
+      );
     }
   }
 
@@ -89,7 +98,9 @@ export class ClerkWebhookService {
     }
   }
 
-  private async updateUserRole(data: any): Promise<void> {
+  private async updateUserRole(
+    data: ClerkOrganizationMembershipData,
+  ): Promise<void> {
     const userId = data.public_user_data?.user_id;
     const organizationId = data.organization?.id || data.organization_id;
     const role = data.role;
@@ -100,12 +111,16 @@ export class ClerkWebhookService {
     }
 
     if (!organizationId) {
-      this.logger.warn(`Missing organizationId in organizationMembership event for user ${userId}`);
+      this.logger.warn(
+        `Missing organizationId in organizationMembership event for user ${userId}`,
+      );
       return;
     }
 
     if (!role) {
-      this.logger.warn(`Missing role in organizationMembership event for user ${userId}`);
+      this.logger.warn(
+        `Missing role in organizationMembership event for user ${userId}`,
+      );
       return;
     }
 
@@ -125,7 +140,8 @@ export class ClerkWebhookService {
     const email = data.public_user_data?.identifier || '';
     const firstName = data.public_user_data?.first_name || '';
     const lastName = data.public_user_data?.last_name || '';
-    const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : null;
+    const name =
+      firstName || lastName ? `${firstName} ${lastName}`.trim() : null;
 
     // Create or update user with organization and role
     await this.prisma.user.upsert({
@@ -145,14 +161,20 @@ export class ClerkWebhookService {
       },
     });
 
-    this.logger.log(`User ${userId} added to organization ${org.id} with role: ${role}`);
+    this.logger.log(
+      `User ${userId} added to organization ${org.id} with role: ${role}`,
+    );
   }
 
-  private async clearUserRole(data: any): Promise<void> {
+  private async clearUserRole(
+    data: ClerkOrganizationMembershipData,
+  ): Promise<void> {
     const userId = data.public_user_data?.user_id;
 
     if (!userId) {
-      this.logger.warn(`Missing userId in organizationMembership.deleted event`);
+      this.logger.warn(
+        `Missing userId in organizationMembership.deleted event`,
+      );
       return;
     }
 
@@ -172,7 +194,7 @@ export class ClerkWebhookService {
     }
   }
 
-  private async createOrganization(data: any): Promise<void> {
+  private async createOrganization(data: ClerkOrganizationData): Promise<void> {
     await this.prisma.organization.upsert({
       where: { clerkOrgId: data.id },
       update: {
@@ -186,7 +208,7 @@ export class ClerkWebhookService {
     this.logger.log(`Organization created: ${data.id}`);
   }
 
-  private async upsertOrganization(data: any): Promise<void> {
+  private async upsertOrganization(data: ClerkOrganizationData): Promise<void> {
     await this.prisma.organization.upsert({
       where: { clerkOrgId: data.id },
       update: {

@@ -1,16 +1,10 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Headers,
-  Logger,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Body, Headers, Logger, Req } from '@nestjs/common';
 import type { RawBodyRequest } from '@nestjs/common';
 import { Request } from 'express';
 import { BaseWebhookController } from './base-webhook.controller';
 import { ClerkWebhookService } from './clerk-webhook.service';
 import { clerkConfig } from '../config/clerk.config';
+import type { ClerkWebhookBody } from './clerk-webhook.types';
 
 @Controller('webhooks')
 export class ClerkWebhookController extends BaseWebhookController {
@@ -27,7 +21,7 @@ export class ClerkWebhookController extends BaseWebhookController {
     @Headers('svix-id') svixId: string,
     @Headers('svix-timestamp') svixTimestamp: string,
     @Headers('svix-signature') svixSignature: string,
-    @Body() body: any,
+    @Body() body: ClerkWebhookBody,
   ) {
     this.verifyWebhook(
       req,
@@ -43,8 +37,11 @@ export class ClerkWebhookController extends BaseWebhookController {
     try {
       await this.clerkWebhookService.handleEvent(body.type, body.data);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Failed to process Clerk event ${body.type}: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to process Clerk event ${body.type}: ${errorMessage}`,
+      );
       // Don't throw - return 200 to prevent webhook retries on transient errors
     }
 
