@@ -20,25 +20,29 @@ export default function QuestionEditor({
   onOpenChange,
   onSave,
 }: QuestionEditorProps) {
-  const [text, setText] = useState('')
-  const [type, setType] = useState<QuestionType>('text')
+  // Initialize state from question prop, reset when dialog closes
+  const [text, setText] = useState(() => question?.text || '')
+  const [type, setType] = useState<QuestionType>(() => question?.type || 'text')
   const [options, setOptions] = useState<{
     options?: string[]
     min?: number
     max?: number
-  } | null>(null)
+  } | null>(() => question?.options || null)
 
+  // Update state when question changes (only when dialog is open)
   useEffect(() => {
-    if (question) {
+    if (open && question) {
       setText(question.text)
       setType(question.type)
       setOptions(question.options || null)
-    } else {
+    } else if (!open) {
+      // Reset when dialog closes
       setText('')
       setType('text')
       setOptions(null)
     }
-  }, [question, open])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, question?.id])
 
   const handleSave = () => {
     if (!text.trim()) return
