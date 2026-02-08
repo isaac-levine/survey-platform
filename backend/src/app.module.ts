@@ -7,6 +7,7 @@ import { SurveyModule } from './survey/survey.module';
 import { QuestionModule } from './question/question.module';
 import { OrganizationModule } from './organization/organization.module';
 import { QuestionBankQuestionModule } from './question-bank-question/question-bank-question.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { QuestionBankQuestionModule } from './question-bank-question/question-ba
     QuestionModule,
     OrganizationModule,
     QuestionBankQuestionModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

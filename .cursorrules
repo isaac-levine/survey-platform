@@ -1,0 +1,110 @@
+# Survey Platform Development Rules
+
+## Auto-Update Instructions for AI
+
+**IMPORTANT**: When you learn new patterns, best practices, or encounter issues during development, automatically update this file with:
+- New rules or patterns discovered
+- Common mistakes to avoid
+- Workflow improvements
+- Tool-specific requirements
+
+**When to update rules:**
+- After fixing linting/formatting issues → add to Code Quality section
+- After schema changes → add to Prisma section
+- After deployment issues → add relevant workflow notes
+- After learning project-specific patterns → add to appropriate section
+- When user corrects a mistake → document the correction
+
+**How to update:**
+- Add new rules to the appropriate section
+- Keep rules concise and actionable
+- Include code examples when helpful
+- Use clear formatting with headers and bullet points
+
+## Code Quality and Linting
+
+**ALWAYS run linting and formatting before committing:**
+
+1. **Before committing code changes:**
+   ```bash
+   cd backend
+   npm run lint
+   ```
+
+2. **Fix auto-fixable issues:**
+   ```bash
+   cd backend
+   npm run lint -- --fix
+   ```
+
+3. **TypeScript strict mode is enabled** - avoid `any` types:
+   - Create proper type definitions for webhook payloads, API responses, etc.
+   - Use type assertions (`as Type`) only when necessary and safe
+   - Prefer interfaces/types over `any` for better type safety
+
+4. **Prettier formatting** is enforced:
+   - Run `npm run lint -- --fix` to auto-format code
+   - Follow existing code style (2 spaces, trailing commas, etc.)
+
+5. **Common linting rules:**
+   - No `any` types without proper justification
+   - No unused variables
+   - Async functions should have `await` expressions (or disable rule with comment)
+   - Use proper error handling with typed errors
+
+## Prisma Schema Changes and Migrations
+
+When making changes to `backend/prisma/schema.prisma`:
+
+1. **Always create a migration** after schema changes:
+   ```bash
+   cd backend
+   npx prisma migrate dev --create-only --name descriptive_migration_name
+   ```
+
+2. **Review the migration SQL** in `backend/prisma/migrations/[timestamp]_[name]/migration.sql` before applying
+
+3. **Apply migration locally**:
+   ```bash
+   cd backend
+   npm run prisma:migrate
+   # or
+   npx prisma migrate dev
+   ```
+
+4. **For production deployments**:
+   - Migrations are applied using `prisma migrate deploy` (not `migrate dev`)
+   - The production migration command is: `npm run prisma:migrate:deploy` in the backend directory
+   - This applies pending migrations without creating new ones
+
+5. **After schema changes**:
+   - Prisma Client is automatically regenerated during `npm run build`
+   - If needed manually: `npm run prisma:generate`
+
+6. **Migration workflow**:
+   - Development: `prisma migrate dev` (creates and applies migration)
+   - Production: `prisma migrate deploy` (only applies existing migrations)
+   - Never use `prisma db push` in production - it doesn't track migrations
+
+## Important Notes
+
+- Schema changes require migrations - don't skip this step
+- Always test migrations locally before deploying
+- Check migration status: `npx prisma migrate status`
+- Migrations are tracked in `backend/prisma/migrations/`
+
+## Git and PR Workflow
+
+**Before creating PRs:**
+1. Always run linting: `cd backend && npm run lint`
+2. Fix all auto-fixable issues: `npm run lint -- --fix`
+3. Ensure build passes: `npm run build`
+4. Check for TypeScript errors
+5. Verify migrations are created if schema changed
+
+**PR Creation Checklist:**
+- [ ] Code compiles without errors
+- [ ] All linting checks pass
+- [ ] Migrations created (if schema changed)
+- [ ] Proper types used (no `any` without justification)
+- [ ] Prettier formatting applied
