@@ -46,7 +46,7 @@ export default function QuestionEditor({
     const questionData: Partial<Question> = {
       text: text.trim(),
       type,
-      options: type === 'multipleChoice' || type === 'rating' ? options : undefined,
+      options: type === 'multipleChoice' || type === 'rating' ? (options ?? undefined) : undefined,
     }
 
     if (question?.id) {

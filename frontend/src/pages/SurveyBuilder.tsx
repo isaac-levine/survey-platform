@@ -168,6 +168,9 @@ export default function SurveyBuilder() {
         ))
       } else {
         // Add new question to local state
+        if (!questionData.text || !questionData.type) {
+          return // Invalid question data
+        }
         const nextOrder = questions.length > 0 
           ? Math.max(...questions.map(q => q.order || 0)) + 1 
           : 0
