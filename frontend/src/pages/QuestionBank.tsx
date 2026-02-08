@@ -24,12 +24,14 @@ export default function QuestionBank() {
     if (organization?.id) {
       loadOrganization()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organization])
 
   useEffect(() => {
     if (currentOrg?.id) {
       loadQuestions()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentOrg])
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function QuestionBank() {
     setEditorOpen(true)
   }
 
-  const handleSave = async (questionData: any) => {
+  const handleSave = async (questionData: Partial<QuestionBankQuestion>) => {
     if (!currentOrg?.id) return
 
     try {

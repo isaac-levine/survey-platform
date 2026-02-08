@@ -42,7 +42,7 @@ export class SurveyService {
     await this.findOne(id);
 
     // Filter out undefined values and only include allowed fields
-    const data: any = {};
+    const data: Partial<CreateSurveyDto> = {};
     if (updateSurveyDto.title !== undefined) {
       data.title = updateSurveyDto.title;
     }

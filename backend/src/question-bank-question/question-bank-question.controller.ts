@@ -41,10 +41,7 @@ export class QuestionBankQuestionController {
 
   @Post(':id/add-to-survey/:surveyId')
   @HttpCode(HttpStatus.CREATED)
-  addToSurvey(
-    @Param('id') id: string,
-    @Param('surveyId') surveyId: string,
-  ) {
+  addToSurvey(@Param('id') id: string, @Param('surveyId') surveyId: string) {
     return this.questionBankQuestionService.addToSurvey(id, surveyId);
   }
 

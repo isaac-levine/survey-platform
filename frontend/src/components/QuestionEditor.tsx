@@ -22,7 +22,11 @@ export default function QuestionEditor({
 }: QuestionEditorProps) {
   const [text, setText] = useState('')
   const [type, setType] = useState<QuestionType>('text')
-  const [options, setOptions] = useState<any>(null)
+  const [options, setOptions] = useState<{
+    options?: string[]
+    min?: number
+    max?: number
+  } | null>(null)
 
   useEffect(() => {
     if (question) {
@@ -62,7 +66,8 @@ export default function QuestionEditor({
   }
 
   const handleOptionChange = (index: number, value: string) => {
-    const newOptions = options?.options || []
+    const currentOptions = options?.options || []
+    const newOptions = [...currentOptions]
     newOptions[index] = value
     setOptions({
       ...options,

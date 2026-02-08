@@ -61,9 +61,8 @@ export class QuestionBankQuestionService {
       take: 1,
     });
 
-    const nextOrder = existingQuestions.length > 0 
-      ? existingQuestions[0].order + 1 
-      : 0;
+    const nextOrder =
+      existingQuestions.length > 0 ? existingQuestions[0].order + 1 : 0;
 
     // Create a new Question based on the bank question
     return this.prisma.question.create({

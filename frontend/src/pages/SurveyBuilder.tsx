@@ -40,6 +40,7 @@ export default function SurveyBuilder() {
       // No organization context - can't proceed
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organization?.id])
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function SurveyBuilder() {
         setLoading(false)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentOrg?.id, id, isNew])
 
   const loadOrganization = async () => {
@@ -62,7 +64,7 @@ export default function SurveyBuilder() {
         `/organizations/clerk/${organization.id}/ensure?name=${encodeURIComponent(organization.name || 'My Organization')}`
       )
       setCurrentOrg(org)
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to load/create organization:', error)
       setLoading(false)
       alert('Failed to load organization. Please refresh the page.')
@@ -154,7 +156,7 @@ export default function SurveyBuilder() {
     }
   }
 
-  const handleQuestionSave = async (questionData: any) => {
+  const handleQuestionSave = async (questionData: Partial<Question>) => {
     // For new surveys, add to local state
     if (isNew || !id) {
       if (editingQuestion) {

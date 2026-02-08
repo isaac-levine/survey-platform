@@ -24,14 +24,14 @@ async function request<T>(
         // If response isn't JSON, use status text
       }
       const error = new Error(errorMessage || `HTTP error! status: ${response.status}`)
-      ;(error as any).status = response.status
+      ;(error as Error & { status?: number }).status = response.status
       throw error
     }
 
     // Handle empty responses
     const text = await response.text()
     return text ? JSON.parse(text) : (null as T)
-  } catch (error: any) {
+  } catch (error) {
     console.error(`API request failed: ${endpoint}`, error)
     throw error
   }
@@ -39,12 +39,12 @@ async function request<T>(
 
 export const api = {
   get: <T>(endpoint: string) => request<T>(endpoint, { method: 'GET' }),
-  post: <T>(endpoint: string, data?: any) =>
+  post: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  patch: <T>(endpoint: string, data?: any) =>
+  patch: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: 'PATCH',
       body: JSON.stringify(data),

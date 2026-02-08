@@ -16,10 +16,12 @@ export default function Surveys() {
   useEffect(() => {
     loadSurveys()
     loadProperties()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     loadSurveys()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterPropertyId])
 
   const loadSurveys = async () => {

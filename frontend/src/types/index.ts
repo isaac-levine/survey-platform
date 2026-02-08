@@ -36,13 +36,19 @@ export interface Survey {
   questions?: Question[]
 }
 
+export interface QuestionOptions {
+  options?: string[]
+  min?: number
+  max?: number
+}
+
 export interface Question {
   id: string
   surveyId: string
   text: string
   type: QuestionType
   order: number
-  options?: any
+  options?: QuestionOptions
   questionBankQuestionId?: string
   createdAt: string
   updatedAt: string
@@ -53,7 +59,7 @@ export interface QuestionBankQuestion {
   organizationId: string
   text: string
   type: QuestionType
-  options?: any
+  options?: QuestionOptions
   createdAt: string
   updatedAt: string
 }

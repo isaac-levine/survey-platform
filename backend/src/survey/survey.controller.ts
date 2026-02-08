@@ -35,7 +35,10 @@ export class SurveyController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body: any) {
+  update(
+    @Param('id') id: string,
+    @Body() body: Partial<CreateSurveyDto>,
+  ) {
     // Extract only allowed fields, excluding undefined values
     const updateSurveyDto: UpdateSurveyDto = {};
     if (body.title !== undefined) {
