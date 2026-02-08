@@ -1,5 +1,26 @@
 # Survey Platform Development Rules
 
+## Auto-Update Instructions for AI
+
+**IMPORTANT**: When you learn new patterns, best practices, or encounter issues during development, automatically update this file with:
+- New rules or patterns discovered
+- Common mistakes to avoid
+- Workflow improvements
+- Tool-specific requirements
+
+**When to update rules:**
+- After fixing linting/formatting issues → add to Code Quality section
+- After schema changes → add to Prisma section
+- After deployment issues → add relevant workflow notes
+- After learning project-specific patterns → add to appropriate section
+- When user corrects a mistake → document the correction
+
+**How to update:**
+- Add new rules to the appropriate section
+- Keep rules concise and actionable
+- Include code examples when helpful
+- Use clear formatting with headers and bullet points
+
 ## Code Quality and Linting
 
 **ALWAYS run linting and formatting before committing:**
@@ -71,3 +92,19 @@ When making changes to `backend/prisma/schema.prisma`:
 - Always test migrations locally before deploying
 - Check migration status: `npx prisma migrate status`
 - Migrations are tracked in `backend/prisma/migrations/`
+
+## Git and PR Workflow
+
+**Before creating PRs:**
+1. Always run linting: `cd backend && npm run lint`
+2. Fix all auto-fixable issues: `npm run lint -- --fix`
+3. Ensure build passes: `npm run build`
+4. Check for TypeScript errors
+5. Verify migrations are created if schema changed
+
+**PR Creation Checklist:**
+- [ ] Code compiles without errors
+- [ ] All linting checks pass
+- [ ] Migrations created (if schema changed)
+- [ ] Proper types used (no `any` without justification)
+- [ ] Prettier formatting applied
