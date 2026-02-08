@@ -1,5 +1,7 @@
 import { UserButton, useUser } from '@clerk/clerk-react'
 import { useNavigate } from 'react-router-dom'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 export default function Dashboard() {
   const { user } = useUser()
@@ -27,36 +29,75 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="text-center py-20">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to your Dashboard
           </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Your survey platform is ready. Start creating surveys and gathering insights.
+          <p className="text-lg text-gray-600">
+            Manage your surveys, question bank, and properties.
           </p>
-          <div className="bg-white rounded-lg shadow-md p-12 max-w-2xl mx-auto">
-            <div className="text-gray-500">
-              <svg
-                className="w-24 h-24 mx-auto mb-6 text-indigo-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Surveys</CardTitle>
+              <CardDescription>
+                Create and manage your surveys
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button
+                className="w-full"
+                onClick={() => navigate('/surveys')}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              <p className="text-xl font-medium text-gray-700">
-                Dashboard content coming soon
-              </p>
-              <p className="mt-2 text-gray-500">
-                This is where you'll manage your surveys, view responses, and analyze data.
-              </p>
-            </div>
-          </div>
+                View All Surveys
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/surveys/new')}
+              >
+                Create New Survey
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Question Bank</CardTitle>
+              <CardDescription>
+                Manage reusable questions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                className="w-full"
+                onClick={() => navigate('/question-bank')}
+              >
+                Manage Question Bank
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Properties</CardTitle>
+              <CardDescription>
+                Manage your properties
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/properties')}
+                disabled
+              >
+                Coming Soon
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
