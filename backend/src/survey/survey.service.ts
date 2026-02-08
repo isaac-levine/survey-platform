@@ -23,6 +23,12 @@ export class SurveyService {
   async findOne(id: string) {
     const survey = await this.prisma.survey.findUnique({
       where: { id },
+      include: {
+        questions: {
+          orderBy: { order: 'asc' },
+        },
+        property: true,
+      },
     });
 
     if (!survey) {
@@ -35,9 +41,21 @@ export class SurveyService {
   async update(id: string, updateSurveyDto: UpdateSurveyDto) {
     await this.findOne(id);
 
+    // Filter out undefined values and only include allowed fields
+    const data: Partial<CreateSurveyDto> = {};
+    if (updateSurveyDto.title !== undefined) {
+      data.title = updateSurveyDto.title;
+    }
+    if (updateSurveyDto.description !== undefined) {
+      data.description = updateSurveyDto.description;
+    }
+    if (updateSurveyDto.propertyId !== undefined) {
+      data.propertyId = updateSurveyDto.propertyId;
+    }
+
     return this.prisma.survey.update({
       where: { id },
-      data: updateSurveyDto,
+      data,
     });
   }
 

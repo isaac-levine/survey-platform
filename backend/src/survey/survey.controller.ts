@@ -35,7 +35,18 @@ export class SurveyController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSurveyDto: UpdateSurveyDto) {
+  update(@Param('id') id: string, @Body() body: Partial<CreateSurveyDto>) {
+    // Extract only allowed fields, excluding undefined values
+    const updateSurveyDto: UpdateSurveyDto = {};
+    if (body.title !== undefined) {
+      updateSurveyDto.title = body.title;
+    }
+    if (body.description !== undefined) {
+      updateSurveyDto.description = body.description;
+    }
+    if (body.propertyId !== undefined) {
+      updateSurveyDto.propertyId = body.propertyId;
+    }
     return this.surveyService.update(id, updateSurveyDto);
   }
 

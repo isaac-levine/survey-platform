@@ -9,4 +9,5 @@ export class CreatePropertyDto {
   country: string;
   sizeSqFt: number;
   class: string;
+  organizationId: string;
 }

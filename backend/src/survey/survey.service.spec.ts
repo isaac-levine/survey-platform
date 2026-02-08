@@ -126,6 +126,12 @@ describe('SurveyService', () => {
       expect(result).toEqual(expectedSurvey);
       expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
+        include: {
+          questions: {
+            orderBy: { order: 'asc' },
+          },
+          property: true,
+        },
       });
     });
 
@@ -135,6 +141,12 @@ describe('SurveyService', () => {
       await expect(service.findOne('999')).rejects.toThrow(NotFoundException);
       expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '999' },
+        include: {
+          questions: {
+            orderBy: { order: 'asc' },
+          },
+          property: true,
+        },
       });
     });
   });
@@ -168,6 +180,12 @@ describe('SurveyService', () => {
       expect(result).toEqual(updatedSurvey);
       expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
+        include: {
+          questions: {
+            orderBy: { order: 'asc' },
+          },
+          property: true,
+        },
       });
       expect(mockPrismaService.survey.update).toHaveBeenCalledWith({
         where: { id: '1' },
@@ -203,6 +221,12 @@ describe('SurveyService', () => {
       expect(result).toEqual(existingSurvey);
       expect(mockPrismaService.survey.findUnique).toHaveBeenCalledWith({
         where: { id: '1' },
+        include: {
+          questions: {
+            orderBy: { order: 'asc' },
+          },
+          property: true,
+        },
       });
       expect(mockPrismaService.survey.delete).toHaveBeenCalledWith({
         where: { id: '1' },
